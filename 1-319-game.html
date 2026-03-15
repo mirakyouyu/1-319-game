@@ -124,11 +124,9 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function pickNew(a,last){if(a.length<=1)return{v:a[0],i:0};let i;do{i=Math.floor(Math.random()*a.length)}while(i===last);return{v:a[i],i}}
 const fl=(id,d)=>{const e=$(id);if(!e)return;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),d)};
-const vib=p=>navigator.vibrate&&navigator.vibrate(p);
 
 // === 全状態を強制クリーンアップ ===
 function cleanupFX(){
-  navigator.vibrate&&navigator.vibrate(0);
   document.body.classList.remove('heavy-shake');
   $('stg').classList.remove('active');
   $('sBg').className='stage-bg';$('sBg').style='';
@@ -157,7 +155,7 @@ function finalResult(hit){
   const res=$('res');draws++;if(hit)hits++;
   const w=multi?gn(ci)+' ':'';
   if(hit){res.textContent=w+'死';res.className='result dead'}
-  else{vib([100]);res.textContent=w+'生';res.className='result safe'}
+  else{res.textContent=w+'生';res.className='result safe'}
   const d=document.createElement('i');if(hit)d.className='hit';$('dots').prepend(d);
   $('st').textContent=draws+'回 / '+hits+'死';
   if(multi){ci=(ci+1)%pc;showTurn()}
@@ -177,7 +175,7 @@ function pushBtn(cls){
   return new Promise(r=>{
     stgSet('rgba(0,0,0,.92)',`<div class="push-btn-wrap show"><button class="push-btn ${cls}" id="epb">押せ</button><div class="push-label">▼ PUSH ▼</div></div>`);
     stgOn();let d=false;
-    const f=()=>{if(d)return;d=true;vib([200,100,200]);fl('fW',120);stgOff();setTimeout(r,350)};
+    const f=()=>{if(d)return;d=true;fl('fW',120);stgOff();setTimeout(r,350)};
     const b=$('epb');if(b){b.onclick=f;b.ontouchstart=e=>{e.preventDefault();f()}}
     setTimeout(f,5000);
   });
@@ -186,7 +184,7 @@ function pushBtn(cls){
 // === Countdown ===
 async function countdown(from){
   const ov=$('cdOv'),nm=$('cdNum');
-  for(let i=from;i>=1;i--){nm.textContent=i;nm.style.animation='none';void nm.offsetHeight;nm.style.animation='cd-pop .8s ease-out';ov.classList.add('active');fl('fR',80);vib([80]);await wait(900)}
+  for(let i=from;i>=1;i--){nm.textContent=i;nm.style.animation='none';void nm.offsetHeight;nm.style.animation='cd-pop .8s ease-out';ov.classList.add('active');fl('fR',80);await wait(900)}
   ov.classList.remove('active');
 }
 
@@ -224,7 +222,7 @@ const REACH=[
 
 async function doReach(){
   const{v,i}=pickNew(REACH,lastR);lastR=i;
-  vib([100,50,100]);
+  
   fl(v.f,150);const b=$('rBan');b.textContent=v.text;b.style.color=v.color;
   b.style.textShadow=`0 0 50px ${v.shadow}`;b.style.background=`linear-gradient(90deg,transparent,${v.bg},transparent)`;
   b.classList.add('show');await wait(2200);b.classList.remove('show');await wait(300);
@@ -234,7 +232,7 @@ const SP_FNS=[
   // 0 AT Field
   async()=>{fl('fG',120);$('atf').classList.add('active');await wait(1800);$('atf').classList.remove('active');await wait(200)},
   // 1 WARNING
-  async()=>{vib([50,30,50,30,50]);const ms=['使徒、侵攻中','生命維持システム限界','全回路、接続不能','シンクロ率、危険域突入','プラグ深度、臨界点'];stgSet('rgba(40,30,0,.95)',`<div style="position:absolute;top:0;left:0;right:0;height:50px;background:repeating-linear-gradient(-45deg,#000 0px,#000 20px,#ff0 20px,#ff0 40px);opacity:.7"></div><div style="font-size:clamp(30px,9vw,56px);font-weight:900;color:#ff0;letter-spacing:10px;text-shadow:0 0 30px rgba(255,255,0,.6)" class="blink">WARNING</div><div style="font-size:clamp(12px,3vw,18px);color:#aa0;margin-top:10px;letter-spacing:3px">${pick(ms)}</div><div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:repeating-linear-gradient(-45deg,#000 0px,#000 20px,#ff0 20px,#ff0 40px);opacity:.7"></div>`);stgOn();fl('fR',150);await wait(2400);stgOff();await wait(200)},
+  async()=>{const ms=['使徒、侵攻中','生命維持システム限界','全回路、接続不能','シンクロ率、危険域突入','プラグ深度、臨界点'];stgSet('rgba(40,30,0,.95)',`<div style="position:absolute;top:0;left:0;right:0;height:50px;background:repeating-linear-gradient(-45deg,#000 0px,#000 20px,#ff0 20px,#ff0 40px);opacity:.7"></div><div style="font-size:clamp(30px,9vw,56px);font-weight:900;color:#ff0;letter-spacing:10px;text-shadow:0 0 30px rgba(255,255,0,.6)" class="blink">WARNING</div><div style="font-size:clamp(12px,3vw,18px);color:#aa0;margin-top:10px;letter-spacing:3px">${pick(ms)}</div><div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:repeating-linear-gradient(-45deg,#000 0px,#000 20px,#ff0 20px,#ff0 40px);opacity:.7"></div>`);stgOn();fl('fR',150);await wait(2400);stgOff();await wait(200)},
   // 2 Countdown
   async()=>{await countdown(pick([3,5]))},
   // 3 暴走警告
@@ -274,7 +272,7 @@ async function doCutin(){
 }
 
 async function doBousou(){
-  vib([100,40,100,40,100,40,100]);
+  
   const ms=[['暴走','制御不能'],['覚醒','リミッター解除'],['解放','自我境界消失'],['咆哮','拘束具破壊'],['崩壊','暗黒面覚醒']];
   const[m,s]=pick(ms);
   $('sBg').className='stage-bg';$('sBg').style.animation='bousou-flash .15s step-end infinite';
@@ -287,15 +285,15 @@ async function doBousou(){
 // === Death FX ===
 const DEATH_FX=[
   // 0: 画面割れ
-  async()=>{vib([30,20,30,20,500]);document.body.classList.add('heavy-shake');fl('fW',150);await wait(200);$('inv').classList.add('on');await wait(120);$('inv').classList.remove('on');await wait(80);showCrack();fl('fW',100);await wait(150);shards(15);particles('#ff4444',25);await wait(300);$('dTxt').textContent='死';$('dTxt').style.color='#f00';$('dTxt').style.textShadow='0 0 60px rgba(255,0,0,.9),0 0 120px rgba(255,0,0,.5)';$('dTxt').classList.add('active');fl('fR',300);document.body.classList.remove('heavy-shake');await wait(2500);$('dTxt').classList.remove('active');$('crack').classList.remove('active');$('crack').innerHTML=''},
+  async()=>{document.body.classList.add('heavy-shake');fl('fW',150);await wait(200);$('inv').classList.add('on');await wait(120);$('inv').classList.remove('on');await wait(80);showCrack();fl('fW',100);await wait(150);shards(15);particles('#ff4444',25);await wait(300);$('dTxt').textContent='死';$('dTxt').style.color='#f00';$('dTxt').style.textShadow='0 0 60px rgba(255,0,0,.9),0 0 120px rgba(255,0,0,.5)';$('dTxt').classList.add('active');fl('fR',300);document.body.classList.remove('heavy-shake');await wait(2500);$('dTxt').classList.remove('active');$('crack').classList.remove('active');$('crack').innerHTML=''},
   // 1: ホワイトアウト
-  async()=>{vib([600]);fl('fW',800);await wait(400);stgSet('rgba(255,255,255,0.9)','');stgOn();await wait(500);$('sBg').style.transition='background 1.5s';$('sBg').style.background='rgba(150,0,0,0.95)';await wait(1000);$('sCt').innerHTML=`<div style="font-size:clamp(60px,18vw,120px);font-weight:900;color:#fff;text-shadow:0 0 80px #fff;animation:slam-in .5s ease-out forwards">死</div>`;fl('fR',200);await wait(2200);$('sBg').style.transition='';stgOff()},
+  async()=>{fl('fW',800);await wait(400);stgSet('rgba(255,255,255,0.9)','');stgOn();await wait(500);$('sBg').style.transition='background 1.5s';$('sBg').style.background='rgba(150,0,0,0.95)';await wait(1000);$('sCt').innerHTML=`<div style="font-size:clamp(60px,18vw,120px);font-weight:900;color:#fff;text-shadow:0 0 80px #fff;animation:slam-in .5s ease-out forwards">死</div>`;fl('fR',200);await wait(2200);$('sBg').style.transition='';stgOff()},
   // 2: 連続フラッシュ反転
-  async()=>{vib([40,60,40,60,40,60,40,60,500]);for(let i=0;i<8;i++){fl(pick(['fR','fW','fG','fP']),40);await wait(100)}$('inv').classList.add('on');await wait(200);$('inv').classList.remove('on');document.body.classList.add('heavy-shake');await wait(150);showCrack();shards(20);particles('#ff00aa',30);fl('fW',200);await wait(200);$('dTxt').textContent='死';$('dTxt').style.color='#f0f';$('dTxt').style.textShadow='0 0 60px rgba(255,0,255,.9)';$('dTxt').classList.add('active');await wait(2500);document.body.classList.remove('heavy-shake');$('dTxt').classList.remove('active');$('crack').classList.remove('active');$('crack').innerHTML=''},
+  async()=>{for(let i=0;i<8;i++){fl(pick(['fR','fW','fG','fP']),40);await wait(100)}$('inv').classList.add('on');await wait(200);$('inv').classList.remove('on');document.body.classList.add('heavy-shake');await wait(150);showCrack();shards(20);particles('#ff00aa',30);fl('fW',200);await wait(200);$('dTxt').textContent='死';$('dTxt').style.color='#f0f';$('dTxt').style.textShadow='0 0 60px rgba(255,0,255,.9)';$('dTxt').classList.add('active');await wait(2500);document.body.classList.remove('heavy-shake');$('dTxt').classList.remove('active');$('crack').classList.remove('active');$('crack').innerHTML=''},
   // 3: カウント0爆発
-  async()=>{stgSet('#000','');stgOn();await wait(800);vib([50,30,50,30,50,30,700]);const nm=$('cdNum'),ov=$('cdOv');nm.textContent='0';nm.style.animation='none';void nm.offsetHeight;nm.style.animation='cd-pop .8s ease-out';nm.style.color='#f00';ov.classList.add('active');fl('fR',200);await wait(1200);ov.classList.remove('active');stgOff();await wait(100);document.body.classList.add('heavy-shake');fl('fW',300);particles('#ff4444',40);particles('#ffd700',20);shards(12);showCrack();await wait(200);$('dTxt').textContent='死';$('dTxt').style.color='#f00';$('dTxt').style.textShadow='0 0 60px rgba(255,0,0,.9)';$('dTxt').classList.add('active');fl('fR',400);await wait(2500);document.body.classList.remove('heavy-shake');$('dTxt').classList.remove('active');$('crack').classList.remove('active');$('crack').innerHTML=''},
+  async()=>{stgSet('#000','');stgOn();await wait(800);const nm=$('cdNum'),ov=$('cdOv');nm.textContent='0';nm.style.animation='none';void nm.offsetHeight;nm.style.animation='cd-pop .8s ease-out';nm.style.color='#f00';ov.classList.add('active');fl('fR',200);await wait(1200);ov.classList.remove('active');stgOff();await wait(100);document.body.classList.add('heavy-shake');fl('fW',300);particles('#ff4444',40);particles('#ffd700',20);shards(12);showCrack();await wait(200);$('dTxt').textContent='死';$('dTxt').style.color='#f00';$('dTxt').style.textShadow='0 0 60px rgba(255,0,0,.9)';$('dTxt').classList.add('active');fl('fR',400);await wait(2500);document.body.classList.remove('heavy-shake');$('dTxt').classList.remove('active');$('crack').classList.remove('active');$('crack').innerHTML=''},
   // 4: グリッチ死
-  async()=>{vib([30,30,30,30,30,30,400]);stgSet('#000',`<div style="font-size:clamp(60px,18vw,110px);font-weight:900;color:#f00;letter-spacing:8px;animation:glitch .08s linear infinite">死</div>`);stgOn();for(let i=0;i<6;i++){fl(pick(['fR','fW']),30);await wait(80)}document.body.classList.add('heavy-shake');await wait(300);showCrack();shards(10);fl('fR',200);await wait(400);particles('#ff0000',30);await wait(1800);document.body.classList.remove('heavy-shake');stgOff();$('crack').classList.remove('active');$('crack').innerHTML=''},
+  async()=>{stgSet('#000',`<div style="font-size:clamp(60px,18vw,110px);font-weight:900;color:#f00;letter-spacing:8px;animation:glitch .08s linear infinite">死</div>`);stgOn();for(let i=0;i<6;i++){fl(pick(['fR','fW']),30);await wait(80)}document.body.classList.add('heavy-shake');await wait(300);showCrack();shards(10);fl('fR',200);await wait(400);particles('#ff0000',30);await wait(1800);document.body.classList.remove('heavy-shake');stgOff();$('crack').classList.remove('active');$('crack').innerHTML=''},
 ];
 
 async function megaDeath(){const{v,i}=pickNew(DEATH_FX,lastD);lastD=i;await v()}
@@ -364,7 +362,7 @@ async function flowSafe(myId){
 function go(){
   if(busy)return;
   busy=true;
-  vib([30]);
+  
   $('btn').classList.add('disabled');
   $('res').textContent='';$('res').className='result';
   runId++;
