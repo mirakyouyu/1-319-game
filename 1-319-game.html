@@ -103,7 +103,7 @@ body{background:#000;color:#fff;font-family:-apple-system,'Hiragino Sans','Yu Go
 <div class="countdown-overlay" id="cdOv"><div class="countdown-num" id="cdNum"></div></div>
 
 <div class="main-ui">
-  <div class="top">1 / 319</div>
+  <div class="top">1 / <input id="denomInput" value="319" inputmode="numeric" pattern="[0-9]*" style="background:none;border:none;border-bottom:1px solid #444;color:#fff;font-size:13px;font-family:inherit;letter-spacing:4px;width:4em;text-align:center;outline:none;padding:0" onchange="setDenom(this.value)"></div>
   <div class="mode-row"><button class="on" id="m1" onclick="setMode(0)">ソロ</button><button id="m2" onclick="setMode(1)">みんなで</button></div>
   <div class="players-row hide" id="prow"></div>
   <div class="turn-name" id="turn"></div>
@@ -116,6 +116,8 @@ body{background:#000;color:#fff;font-family:-apple-system,'Hiragino Sans','Yu Go
 
 <script>
 let multi=false,pc=2,names=[],ci=0,draws=0,hits=0,busy=false;
+let denom=319;
+function setDenom(v){const n=Math.max(1,Math.min(99999,parseInt(v)||1));denom=n;$('denomInput').value=n;fullReset()}
 let lastY=-1,lastR=-1,lastSP=-1,lastC=-1,lastD=-1;
 let runId=0; // 演出IDで古い演出をキャンセル検知
 
@@ -379,7 +381,7 @@ function go(){
   $('res').textContent='';$('res').className='result';
   runId++;
   const myId=runId;
-  const hit=Math.floor(Math.random()*319)===0;
+  const hit=Math.floor(Math.random()*denom)===0;
   const flow=hit?flowDeath:flowSafe;
   flow(myId).catch(e=>{console.error('enshutsu error:',e)}).finally(()=>{cleanupFX();unlock()});
 }
