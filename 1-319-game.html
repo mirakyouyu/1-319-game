@@ -92,6 +92,12 @@ body{background:#000;color:#fff;font-family:-apple-system,'Hiragino Sans','Yu Go
 .push-btn.red-btn{background:radial-gradient(circle at 40% 35%,#ff4444,#880000);box-shadow:0 0 30px rgba(255,0,0,.5),0 8px 0 #550000}
 .push-btn.gold-btn{background:radial-gradient(circle at 40% 35%,#ffd700,#886600);box-shadow:0 0 30px rgba(255,200,0,.5),0 8px 0 #554400}
 .push-btn.rainbow-btn{background:conic-gradient(#f00,#f80,#ff0,#0f0,#0ff,#80f,#f0f,#f00);box-shadow:0 0 40px rgba(255,255,255,.4),0 8px 0 #444;animation:push-pulse .5s ease-in-out infinite alternate,orb-spin 2s linear infinite}
+.push-btn.blue-btn{background:radial-gradient(circle at 40% 35%,#6699ff,#0033cc);box-shadow:0 0 30px rgba(68,136,255,.5),0 8px 0 #001166}
+.push-btn.purple-btn{background:radial-gradient(circle at 40% 35%,#cc66ff,#7700cc);box-shadow:0 0 30px rgba(180,0,255,.5),0 8px 0 #440077}
+.push-btn.silver-btn{background:radial-gradient(circle at 40% 35%,#f0f0f0,#aaa,#666);box-shadow:0 0 25px rgba(220,220,220,.4),0 8px 0 #444;color:#333}
+.push-btn.eva-btn{background:radial-gradient(circle at 40% 35%,#ffaa33,#aa4400);box-shadow:0 0 30px rgba(255,140,0,.5),0 8px 0 #662200}
+.push-btn.black-btn{background:radial-gradient(circle at 40% 35%,#333,#111,#000);box-shadow:0 0 15px rgba(80,0,0,.6),0 8px 0 #000,0 0 0 2px #222}
+.push-btn.chaos-btn{background:conic-gradient(#f00,#f80,#ff0,#0f0,#0ff,#80f,#f0f,#f00);box-shadow:0 0 50px rgba(255,255,255,.7),0 8px 0 #222;animation:push-pulse .25s ease-in-out infinite alternate,orb-spin .6s linear infinite}
 .push-btn:active{transform:scale(.9) translateY(4px)!important;box-shadow:none!important}
 .push-label{font-size:14px;color:#aaa;margin-top:10px;letter-spacing:3px;animation:blink-anim .5s step-end infinite}
 .particle{position:fixed;border-radius:50%;z-index:87;pointer-events:none;animation:particle-fly 1.2s ease-out forwards}
@@ -240,11 +246,32 @@ function stgOff(){$('stg').classList.remove('active')}
 function stgSet(bg,html){$('sBg').style.background=bg;$('sBg').className='stage-bg';$('sCt').innerHTML=html}
 
 // === Push ===
+const PUSH_LABELS={
+  'red-btn':  ['押せ','やれ','…押せ','押すんだ'],
+  'gold-btn': ['LUCKY!!','チャンス！','押せ！','今だ'],
+  'rainbow-btn':['今だ！','PUSH!!','チャンス！','押せえ！'],
+  'blue-btn': ['押せ','GO','PUSH','行け'],
+  'purple-btn':['押せ','…','やれ','押せ…'],
+  'silver-btn':['PUSH','押して','CHANCE','押すな…？'],
+  'eva-btn':  ['乗れ','やれ','押せ','今すぐ'],
+  'black-btn':['…','押すな','押せ','死ぬぞ'],
+  'chaos-btn':['！！！','今すぐ！！','PUSH!!!','押せえええ'],
+};
+const PUSH_EFFECTS={
+  'rainbow-btn':()=>{['#f44','#fa0','#ff0','#0f4','#0ff','#a0f'].forEach(c=>particles(c,9))},
+  'gold-btn':  ()=>{particles('#ffd700',30);particles('#fff',12)},
+  'blue-btn':  ()=>{particles('#4488ff',25);fl('fW',80)},
+  'purple-btn':()=>{particles('#aa44ff',20);fl('fP',100)},
+  'eva-btn':   ()=>{particles('#ff8800',25);fl('fG',120)},
+  'black-btn': ()=>{$('inv').classList.add('on');setTimeout(()=>$('inv').classList.remove('on'),220)},
+  'chaos-btn': ()=>{['#f44','#ff0','#0f0','#0ff','#a0f','#fff'].forEach((c,i)=>setTimeout(()=>{fl(pick(['fR','fW','fG','fP']),60);particles(c,8)},i*80))},
+};
 function pushBtn(cls){
   return new Promise(r=>{
-    stgSet('rgba(0,0,0,.92)',`<div class="push-btn-wrap show"><button class="push-btn ${cls}" id="epb">押せ</button><div class="push-label">▼ PUSH ▼</div></div>`);
+    const label=pick(PUSH_LABELS[cls]||['押せ']);
+    stgSet('rgba(0,0,0,.92)',`<div class="push-btn-wrap show"><button class="push-btn ${cls}" id="epb">${label}</button><div class="push-label">▼ PUSH ▼</div></div>`);
     stgOn();let d=false;
-    const f=()=>{if(d)return;d=true;sndPush();fl('fW',120);stgOff();setTimeout(r,350)};
+    const f=()=>{if(d)return;d=true;sndPush();if(PUSH_EFFECTS[cls])PUSH_EFFECTS[cls]();fl('fW',120);stgOff();setTimeout(r,350)};
     const b=$('epb');if(b){b.onclick=f;b.ontouchstart=e=>{e.preventDefault();f()}}
     setTimeout(f,5000);
   });
@@ -467,7 +494,8 @@ async function flowDeath(myId){
   if(Math.random()<.8){await doCutin();if(!ok())return}
   if(Math.random()<.5){await doBousou();if(!ok())return}
   if(Math.random()<.7){
-    const bc=Math.random()<.5?'rainbow-btn':Math.random()<.5?'gold-btn':'red-btn';
+    const r2=Math.random();
+    const bc=r2<.05?'chaos-btn':r2<.15?'rainbow-btn':r2<.28?'gold-btn':r2<.4?'eva-btn':pick(['red-btn','blue-btn','purple-btn','silver-btn','black-btn']);
     await pushBtn(bc);if(!ok())return;
   }
   await megaDeath();
@@ -480,9 +508,9 @@ async function flowSafe(myId){
   if(r<.78){await wait(120);if(ok())finalResult(false);return}
   if(r<.88){await doYokoku();if(!ok())return;await wait(150);if(ok())finalResult(false);return}
   if(r<.95){await doYokoku();if(!ok())return;await doReach();if(!ok())return;if(Math.random()<.3){await doSP();if(!ok())return}await wait(150);if(ok())finalResult(false);return}
-  if(r<.99){await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doCutin();if(!ok())return;if(Math.random()<.3){await pushBtn('red-btn');if(!ok())return}await wait(150);if(ok())finalResult(false);return}
+  if(r<.99){await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doCutin();if(!ok())return;if(Math.random()<.3){await pushBtn(pick(['red-btn','blue-btn','silver-btn','gold-btn']));if(!ok())return}await wait(150);if(ok())finalResult(false);return}
   // 1% 暴走ガセ
-  await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doBousou();if(!ok())return;await pushBtn(Math.random()<.3?'rainbow-btn':'red-btn');if(!ok())return;await wait(150);if(ok())finalResult(false);
+  await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doBousou();if(!ok())return;await pushBtn(Math.random()<.25?'rainbow-btn':Math.random()<.3?'gold-btn':pick(['red-btn','blue-btn','purple-btn']));if(!ok())return;await wait(150);if(ok())finalResult(false);
 }
 
 // ================================================================
