@@ -71,6 +71,16 @@ body{background:#000;color:#fff;font-family:-apple-system,'Hiragino Sans','Yu Go
 @keyframes push-pulse{to{transform:scale(1.08)}}
 @keyframes particle-fly{0%{opacity:1;transform:translate(0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}}
 @keyframes shard-fall{0%{opacity:1;transform:translate(0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),100vh) rotate(var(--rot))}}
+.input-row{display:flex;align-items:center;gap:30px}
+.lever-wrap{display:flex;flex-direction:column;align-items:center;cursor:grab;-webkit-tap-highlight-color:transparent;position:relative}
+.lever-wrap.disabled{opacity:.3;pointer-events:none}
+.lever-shaft-wrap{position:relative;width:64px;height:150px}
+.lever-shaft{width:13px;height:150px;background:linear-gradient(90deg,#2a2a2a,#888,#ccc,#999,#333);border-radius:7px;transform-origin:bottom center;transform:rotate(-18deg);position:absolute;bottom:0;left:50%;margin-left:-6px;box-shadow:2px 2px 8px rgba(0,0,0,.7)}
+.lever-handle{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8080,#dd0000,#7a0000);box-shadow:0 0 22px rgba(200,0,0,.4),0 5px 12px rgba(0,0,0,.8),inset 0 -4px 8px rgba(0,0,0,.5);position:absolute;top:-26px;left:50%;transform:translateX(-50%);animation:lever-glow 2s ease-in-out infinite alternate}
+@keyframes lever-glow{from{box-shadow:0 0 14px rgba(200,0,0,.3),0 5px 12px rgba(0,0,0,.8)}to{box-shadow:0 0 36px rgba(220,0,0,.6),0 5px 12px rgba(0,0,0,.8)}}
+.lever-base{width:56px;height:20px;background:linear-gradient(180deg,#5a5a5a,#222);border-radius:5px;box-shadow:0 5px 0 #111,0 8px 14px rgba(0,0,0,.6)}
+.lever-label{font-size:11px;color:#333;letter-spacing:4px;margin-top:10px;animation:blink-anim 1s step-end infinite}
+@keyframes lever-pull{0%{transform:rotate(-18deg)}28%{transform:rotate(54deg)}62%{transform:rotate(48deg)}100%{transform:rotate(-18deg)}}
 @keyframes zoom-in-out{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
 @keyframes glitch{0%{clip-path:inset(20% 0 60% 0);transform:translate(-3px)}20%{clip-path:inset(60% 0 10% 0);transform:translate(3px)}40%{clip-path:inset(40% 0 30% 0);transform:translate(-2px)}60%{clip-path:inset(10% 0 70% 0);transform:translate(2px)}80%{clip-path:inset(50% 0 20% 0);transform:translate(-3px)}100%{clip-path:inset(30% 0 40% 0);transform:translate(3px)}}
 .telop{font-size:clamp(20px,6vw,36px);font-weight:900;letter-spacing:4px;white-space:nowrap;opacity:0}
@@ -107,7 +117,14 @@ body{background:#000;color:#fff;font-family:-apple-system,'Hiragino Sans','Yu Go
   <div class="mode-row"><button class="on" id="m1" onclick="setMode(0)">ソロ</button><button id="m2" onclick="setMode(1)">みんなで</button></div>
   <div class="players-row hide" id="prow"></div>
   <div class="turn-name" id="turn"></div>
-  <button class="btn" id="btn" onclick="go()">引く</button>
+  <div class="input-row">
+    <div class="lever-wrap" id="lever" onmousedown="lStart(event)" ontouchstart="lStart(event)">
+      <div class="lever-shaft-wrap"><div class="lever-shaft" id="lShaft"><div class="lever-handle"></div></div></div>
+      <div class="lever-base"></div>
+      <div class="lever-label">PULL</div>
+    </div>
+    <button class="btn" id="btn" onclick="go()">引く</button>
+  </div>
   <div class="result" id="res"></div>
   <div class="stats" id="st"></div>
   <div class="dots" id="dots"></div>
@@ -139,6 +156,7 @@ function sndPush(){const a=aC(),o=a.createOscillator(),g=a.createGain();o.connec
 function sndDeath(){const a=aC(),b=a.createBuffer(1,Math.floor(a.sampleRate*.6),a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='lowpass';f.frequency.value=700;s.buffer=b;s.connect(f);f.connect(g);g.connect(a.destination);g.gain.setValueAtTime(1,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.6);s.start();const o=a.createOscillator(),og=a.createGain();o.connect(og);og.connect(a.destination);o.frequency.setValueAtTime(90,a.currentTime);o.frequency.exponentialRampToValueAtTime(25,a.currentTime+.5);og.gain.setValueAtTime(.8,a.currentTime);og.gain.exponentialRampToValueAtTime(.001,a.currentTime+.5);o.start();o.stop(a.currentTime+.5)}
 function sndSafe(){const a=aC();[523,659,784].forEach((freq,i)=>{const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type='sine';o.frequency.value=freq;const t=a.currentTime+i*.12;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.25,t+.06);g.gain.exponentialRampToValueAtTime(.001,t+.9);o.start(t);o.stop(t+.9)})}
 function sndBoom(){const a=aC(),b=a.createBuffer(1,Math.floor(a.sampleRate*.8),a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(a.sampleRate*.15));const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='lowpass';f.frequency.value=150;s.buffer=b;s.connect(f);f.connect(g);g.connect(a.destination);g.gain.setValueAtTime(1.2,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.8);s.start()}
+function sndLever(){const a=aC(),b=a.createBuffer(1,Math.floor(a.sampleRate*.12),a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(a.sampleRate*.018));const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='lowpass';f.frequency.value=500;s.buffer=b;s.connect(f);f.connect(g);g.connect(a.destination);g.gain.setValueAtTime(1,a.currentTime);s.start()}
 function sndElectric(){const a=aC(),b=a.createBuffer(1,Math.floor(a.sampleRate*.4),a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/(a.sampleRate*.4));const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='bandpass';f.frequency.value=2500;f.Q.value=2;s.buffer=b;s.connect(f);f.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.7,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.4);s.start()}
 
 // === 全状態を強制クリーンアップ ===
@@ -159,7 +177,42 @@ function cleanupFX(){
   document.querySelectorAll('.particle,.shard').forEach(e=>e.remove());
 }
 
-function unlock(){busy=false;$('btn').classList.remove('disabled')}
+function unlock(){busy=false;$('btn').classList.remove('disabled');$('lever').classList.remove('disabled')}
+
+// === Lever ===
+let lvDrag=false,lvDragged=false,lvY=0,lvAng=-18;
+const LREST=-18,LTRIG=28,LMAX=54;
+function lSetAng(a){lvAng=a;$('lShaft').style.transform=`rotate(${a}deg)`}
+function lStart(e){
+  if(busy)return;e.preventDefault();
+  lvDrag=true;lvDragged=false;lvY=e.touches?e.touches[0].clientY:e.clientY;
+  $('lever').style.cursor='grabbing';
+  document.addEventListener('mousemove',lMove);document.addEventListener('mouseup',lEnd);
+  document.addEventListener('touchmove',lMove,{passive:false});document.addEventListener('touchend',lEnd);
+}
+function lMove(e){
+  if(!lvDrag)return;e.preventDefault();
+  const y=e.touches?e.touches[0].clientY:e.clientY,dy=y-lvY;
+  if(Math.abs(dy)>6)lvDragged=true;
+  lSetAng(Math.max(LREST,Math.min(LMAX,LREST+dy*.65)));
+}
+function lEnd(){
+  if(!lvDrag)return;lvDrag=false;
+  $('lever').style.cursor='grab';
+  document.removeEventListener('mousemove',lMove);document.removeEventListener('mouseup',lEnd);
+  document.removeEventListener('touchmove',lMove);document.removeEventListener('touchend',lEnd);
+  (!lvDragged||lvAng>=LTRIG)?lPull():lSnap();
+}
+function lPull(){
+  if(busy)return;
+  sndLever();
+  const s=$('lShaft');s.style.transition='';s.style.animation='lever-pull .38s ease-in-out';
+  setTimeout(()=>{s.style.animation='';lSetAng(LREST);go(true)},360);
+}
+function lSnap(){
+  const s=$('lShaft');s.style.transition='transform .28s cubic-bezier(.34,1.56,.64,1)';
+  lSetAng(LREST);setTimeout(()=>s.style.transition='',300);
+}
 
 // === ゲーム ===
 function setMode(m){multi=!!m;$('m1').className=m?'':'on';$('m2').className=m?'on':'';if(multi){$('prow').classList.remove('hide');buildInputs()}else $('prow').classList.add('hide');ci=0;showTurn()}
@@ -433,11 +486,11 @@ async function flowSafe(myId){
 }
 
 // ================================================================
-function go(){
+function go(fromLever){
   if(busy)return;
   busy=true;
-  sndClick();
-  $('btn').classList.add('disabled');
+  if(!fromLever)sndClick();
+  $('btn').classList.add('disabled');$('lever').classList.add('disabled');
   $('res').textContent='';$('res').className='result';
   runId++;
   const myId=runId;
