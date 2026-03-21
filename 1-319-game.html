@@ -420,19 +420,6 @@ const DEATH_FX=[
 
 async function megaDeath(){const{v,i}=pickNew(DEATH_FX,lastD);lastD=i;sndDeath();await v()}
 
-async function revivalDeath(){
-  const w=multi?gn(ci)+' ':'';
-  const fs=$('fSafe');fs.textContent=w+'生';fs.classList.add('active');
-  await wait(2000);
-  fs.style.animation='blink-anim .15s step-end 4';await wait(600);
-  fs.classList.remove('active');fs.style.animation='';await wait(200);
-  fl('fW',60);await wait(100);fl('fR',60);await wait(100);fl('fW',60);await wait(200);
-  const rM=['復活…拒否','お前は逃がさない','甘いな','まだ終わっていない','逃げられると思ったか'];
-  stgSet('rgba(40,20,0,.95)',`<div style="font-size:clamp(30px,9vw,56px);font-weight:900;color:#ff0;letter-spacing:10px;text-shadow:0 0 30px rgba(255,255,0,.6)" class="blink">WARNING</div><div style="font-size:clamp(12px,3vw,18px);color:#f66;margin-top:12px;letter-spacing:3px">${pick(rM)}</div>`);
-  stgOn();await wait(2200);stgOff();await wait(300);
-  await megaDeath();
-}
-
 // ================================================================
 // FLOW
 // ================================================================
@@ -445,14 +432,6 @@ async function flowDeath(myId){
   if(complexity<.02){await wait(120);if(!ok())return;await megaDeath();if(ok())finalResult(true);return}
   // 5% 予告即死
   if(complexity<.07){await doYokoku();if(!ok())return;await megaDeath();if(ok())finalResult(true);return}
-
-  // 25% 復活死
-  if(Math.random()<.25){
-    if(Math.random()<.6){await doYokoku();if(!ok())return}
-    await doReach();if(!ok())return;
-    if(Math.random()<.4){await doSP();if(!ok())return}
-    await revivalDeath();if(ok())finalResult(true);return;
-  }
 
   // 通常死
   await doYokoku();if(!ok())return;
