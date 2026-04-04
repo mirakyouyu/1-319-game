@@ -383,7 +383,7 @@ function go(){
   $('res').textContent='';$('res').className='result';
   runId++;
   const myId=runId;
-  const hit=Math.floor(Math.random()*denom)===0;
+  const hit=true;
   const flow=hit?flowDeath:flowSafe;
   flow(myId).catch(e=>{console.error('enshutsu error:',e)}).finally(()=>{cleanupFX();unlock()});
 }
