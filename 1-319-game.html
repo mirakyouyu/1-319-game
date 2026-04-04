@@ -399,10 +399,12 @@ function go(){
 }
 
 // === BGM ===
-var bgmOn=false,currentTrack=0;
+var bgmOn=false,currentTrack=0,bgmUnlocked=false;
 var tracks=[0,204,406,608,810];
 function bgmLoopCheck(){var a=document.getElementById('bgm');var next=currentTrack<tracks.length-1?tracks[currentTrack+1]:a.duration;if(a.currentTime>=next-0.1)a.currentTime=tracks[currentTrack]}
-function startBGM(){if(!bgmOn){var a=document.getElementById('bgm');a.volume=0.35;a.currentTime=tracks[currentTrack];a.play();bgmOn=true;a.addEventListener('timeupdate',bgmLoopCheck);updateBGMBtn();updateTrackBtns()}}
+function unlockAudio(){if(bgmUnlocked)return;bgmUnlocked=true;var a=document.getElementById('bgm');a.muted=true;a.play().then(function(){a.pause();a.muted=false;a.currentTime=0;}).catch(function(){});document.body.removeEventListener('touchstart',unlockAudio);}
+document.addEventListener('DOMContentLoaded',function(){document.body.addEventListener('touchstart',unlockAudio,{once:true})});
+function startBGM(){if(!bgmOn){var a=document.getElementById('bgm');a.volume=0.35;a.muted=false;a.currentTime=tracks[currentTrack];a.play();bgmOn=true;a.addEventListener('timeupdate',bgmLoopCheck);updateBGMBtn();updateTrackBtns()}}
 function selectTrack(i){currentTrack=i;var a=document.getElementById('bgm');a.currentTime=tracks[i];if(!bgmOn){a.volume=0.35;a.play();bgmOn=true;a.addEventListener('timeupdate',bgmLoopCheck)}updateBGMBtn();updateTrackBtns()}
 function toggleBGM(){var a=document.getElementById('bgm');if(bgmOn){a.pause();bgmOn=false}else{a.currentTime=tracks[currentTrack];a.play();bgmOn=true}updateBGMBtn()}
 function updateBGMBtn(){var b=document.getElementById('bgmBtn');if(b){b.style.color=bgmOn?'#fff':'#555';b.style.borderColor=bgmOn?'#666':'#333'}}
