@@ -422,14 +422,13 @@ const DEATH_FX=[
   async()=>{const stages=[{t:'弐号機 覚醒',c:'#f00',s:'UNIT-02 AWAKENING'},{t:'暴走限界突破',c:'#ff4400',s:'GOING BEYOND LIMITS'},{t:'制御不能',c:'#ff0055',s:'UNCONTROLLABLE'}];for(const st of stages){stgSet('radial-gradient(circle,rgba(60,0,0,.95),#000)',`<div style="font-size:clamp(28px,8vw,50px);font-weight:900;color:${st.c};letter-spacing:6px;text-shadow:0 0 40px ${st.c}88;animation:slam-in .4s ease-out forwards">${st.t}</div><div style="font-size:clamp(10px,2.5vw,14px);color:${st.c}88;letter-spacing:6px;margin-top:10px;animation:fade-up .4s .3s ease-out both;opacity:0">${st.s}</div>`);stgOn();fl('fR',150);document.body.classList.add('heavy-shake');await wait(1200);stgOff();document.body.classList.remove('heavy-shake');await wait(200)}sndBousou();document.body.classList.add('heavy-shake');for(let i=0;i<8;i++){fl(pick(['fR','fW','fP']),60);await wait(80)}showCrack();shards(30);particles('#ff0000',60);particles('#ff4400',40);particles('#ff00ff',20);sndBoom();fl('fW',500);await wait(300);$('dTxt').textContent='死';$('dTxt').style.color='#f0f';$('dTxt').style.textShadow='0 0 60px rgba(255,0,255,.9),0 0 120px rgba(255,0,100,.6)';$('dTxt').classList.add('active');await wait(5200);document.body.classList.remove('heavy-shake');$('dTxt').classList.remove('active');$('crack').classList.remove('active');$('crack').innerHTML=''},
 ];
 
-async function megaDeath(){const{v,i}=pickNew(DEATH_FX,lastD);lastD=i;sndDeath();if(Math.random()<.75)sndDead2();await v()}
+async function megaDeath(){const{v,i}=pickNew(DEATH_FX,lastD);lastD=i;sndDeath();const r=Math.random();if(r<.25)sndDead();else sndDead2();await v()}
 
 // ================================================================
 // FLOW
 // ================================================================
 async function flowDeath(myId){
   const ok=()=>myId===runId; // まだ有効か
-  if(Math.random()<.25)sndDead();
 
   const complexity=Math.random();
 
