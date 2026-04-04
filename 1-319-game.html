@@ -108,7 +108,7 @@ body{background:#000;color:#fff;font-family:-apple-system,'Hiragino Sans','Yu Go
   <div class="mode-row"><button class="on" id="m1" onclick="setMode(0)">ソロ</button><button id="m2" onclick="setMode(1)">みんなで</button></div>
   <div class="players-row hide" id="prow"></div>
   <div class="turn-name" id="turn"></div>
-  <button class="btn" id="btn" onclick="go()" ontouchstart="try{aC().resume()}catch(e){}">引く</button>
+  <button class="btn" id="btn" onclick="go()">引く</button>
   <div class="result" id="res"></div>
   <div class="stats" id="st"></div>
   <div class="dots" id="dots"></div>
@@ -378,7 +378,6 @@ function go(){
   if(busy)return;
   busy=true;
   sndClick();
-  try{startBGM()}catch(e){};
   $('btn').classList.add('disabled');
   $('res').textContent='';$('res').className='result';
   runId++;
@@ -390,7 +389,16 @@ function go(){
 
 // === BGM ===
 var bgmOn=false;
-function startBGM(){if(!bgmOn){try{var a=document.getElementById('bgm');a.volume=0.35;a.play().catch(function(){});bgmOn=true;}catch(e){}}}
+(function(){
+  // 最初の touchend で BGM を起動（効果音と競合しない）
+  document.addEventListener('touchend',function bgmUnlock(){
+    document.removeEventListener('touchend',bgmUnlock);
+    var a=document.getElementById('bgm');
+    a.volume=0.35;
+    a.play().catch(function(){});
+    bgmOn=true;
+  },{once:true});
+})();
 
 function fullReset(){
   runId++; // 走ってる演出を無効化
