@@ -401,6 +401,11 @@ function go(){
 // === BGM ===
 var bgmOn=false,currentTrack=0;
 var tracks=[0,204,406,608,810];
+document.addEventListener('DOMContentLoaded',function(){
+  document.body.addEventListener('touchstart',function(){
+    var a=document.getElementById('bgm');if(a.readyState===0)a.load();
+  },{once:true});
+});
 function bgmLoopCheck(){var a=document.getElementById('bgm');var next=currentTrack<tracks.length-1?tracks[currentTrack+1]:a.duration;if(a.currentTime>=next-0.1)a.currentTime=tracks[currentTrack]}
 function startBGM(){if(!bgmOn){var a=document.getElementById('bgm');a.volume=0.35;a.currentTime=tracks[currentTrack];a.play().catch(function(){});bgmOn=true;a.addEventListener('timeupdate',bgmLoopCheck);updateBGMBtn();updateTrackBtns()}}
 function selectTrack(i){currentTrack=i;var a=document.getElementById('bgm');a.currentTime=tracks[i];if(!bgmOn){a.volume=0.35;a.play();bgmOn=true;a.addEventListener('timeupdate',bgmLoopCheck)}updateBGMBtn();updateTrackBtns()}
