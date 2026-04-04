@@ -108,7 +108,7 @@ body{background:#000;color:#fff;font-family:-apple-system,'Hiragino Sans','Yu Go
   <div class="mode-row"><button class="on" id="m1" onclick="setMode(0)">ソロ</button><button id="m2" onclick="setMode(1)">みんなで</button></div>
   <div class="players-row hide" id="prow"></div>
   <div class="turn-name" id="turn"></div>
-  <button class="btn" id="btn" onclick="go()">引く</button>
+  <button class="btn" id="btn" onclick="go()" ontouchstart="try{aC().resume()}catch(e){}">引く</button>
   <div class="result" id="res"></div>
   <div class="stats" id="st"></div>
   <div class="dots" id="dots"></div>
@@ -377,8 +377,8 @@ async function flowSafe(myId){
 function go(){
   if(busy)return;
   busy=true;
-  try{startBGM()}catch(e){}
   sndClick();
+  try{startBGM()}catch(e){};
   $('btn').classList.add('disabled');
   $('res').textContent='';$('res').className='result';
   runId++;
