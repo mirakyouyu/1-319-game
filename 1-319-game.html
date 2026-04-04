@@ -89,7 +89,6 @@ body{background:#000;color:#fff;font-family:-apple-system,'Hiragino Sans','Yu Go
 </style>
 </head>
 <body>
-<audio id="bgm" src="bgm.mp4" loop preload="auto"></audio>
 <div class="screen-flash" id="fR" style="background:#e00"></div>
 <div class="screen-flash" id="fW" style="background:#fff"></div>
 <div class="screen-flash" id="fG" style="background:#fd0"></div>
@@ -130,16 +129,7 @@ const fl=(id,d)=>{const e=$(id);if(!e)return;e.classList.add('on');setTimeout(()
 
 // === Audio ===
 let actx=null;
-function aC(){
-  if(!actx){
-    actx=new(window.AudioContext||window.webkitAudioContext)();
-    var buf=actx.createBuffer(1,1,actx.sampleRate);
-    var src=actx.createBufferSource();
-    src.buffer=buf;src.connect(actx.destination);src.start(0);
-  }
-  if(actx.state==='suspended')actx.resume();
-  return actx;
-}
+function aC(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();return actx}
 function sndClick(){const a=aC(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=900;g.gain.setValueAtTime(.25,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.06);o.start();o.stop(a.currentTime+.06)}
 function sndReach(){const a=aC();for(let i=0;i<10;i++){const t=a.currentTime+i*.09,b=a.createBuffer(1,Math.floor(a.sampleRate*.07),a.sampleRate),d=b.getChannelData(0);for(let j=0;j<d.length;j++)d[j]=(Math.random()*2-1)*.5;const s=a.createBufferSource(),g=a.createGain();s.buffer=b;s.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.5+i*.04,t);g.gain.exponentialRampToValueAtTime(.001,t+.08);s.start(t)}}
 function sndWarning(){const a=aC();for(let i=0;i<5;i++){const t=a.currentTime+i*.28,o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=i%2===0?1000:700;g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.001,t+.22);o.start(t);o.stop(t+.22)}}
@@ -391,23 +381,10 @@ function go(){
   $('res').textContent='';$('res').className='result';
   runId++;
   const myId=runId;
-  const hit=true;
+  const hit=Math.floor(Math.random()*denom)===0;
   const flow=hit?flowDeath:flowSafe;
   flow(myId).catch(e=>{console.error('enshutsu error:',e)}).finally(()=>{cleanupFX();unlock()});
 }
-
-// === BGM ===
-var bgmOn=false;
-(function(){
-  // 最初の touchend で BGM を起動（効果音と競合しない）
-  document.addEventListener('touchend',function bgmUnlock(){
-    document.removeEventListener('touchend',bgmUnlock);
-    var a=document.getElementById('bgm');
-    a.volume=0.35;
-    a.play().catch(function(){});
-    bgmOn=true;
-  },{once:true});
-})();
 
 function fullReset(){
   runId++; // 走ってる演出を無効化
