@@ -387,7 +387,7 @@ async function flowSafe(myId){
 function go(){
   if(busy)return;
   busy=true;
-  startBGM();
+  try{startBGM()}catch(e){}
   sndClick();
   $('btn').classList.add('disabled');
   $('res').textContent='';$('res').className='result';
@@ -407,7 +407,7 @@ document.addEventListener('DOMContentLoaded',function(){
   },{once:true});
 });
 function bgmLoopCheck(){var a=document.getElementById('bgm');var next=currentTrack<tracks.length-1?tracks[currentTrack+1]:a.duration;if(a.currentTime>=next-0.1)a.currentTime=tracks[currentTrack]}
-function startBGM(){if(!bgmOn){var a=document.getElementById('bgm');a.volume=0.35;a.currentTime=tracks[currentTrack];a.play().catch(function(){});bgmOn=true;a.addEventListener('timeupdate',bgmLoopCheck);updateBGMBtn();updateTrackBtns()}}
+function startBGM(){if(!bgmOn){try{var a=document.getElementById('bgm');a.volume=0.35;try{a.currentTime=tracks[currentTrack]}catch(e){}a.play().catch(function(){});bgmOn=true;a.addEventListener('timeupdate',bgmLoopCheck);updateBGMBtn();updateTrackBtns()}catch(e){}}}
 function selectTrack(i){currentTrack=i;var a=document.getElementById('bgm');a.currentTime=tracks[i];if(!bgmOn){a.volume=0.35;a.play();bgmOn=true;a.addEventListener('timeupdate',bgmLoopCheck)}updateBGMBtn();updateTrackBtns()}
 function toggleBGM(){var a=document.getElementById('bgm');if(bgmOn){a.pause();bgmOn=false}else{a.currentTime=tracks[currentTrack];a.play();bgmOn=true}updateBGMBtn()}
 function updateBGMBtn(){var b=document.getElementById('bgmBtn');if(b){b.style.color=bgmOn?'#fff':'#555';b.style.borderColor=bgmOn?'#666':'#333'}}
