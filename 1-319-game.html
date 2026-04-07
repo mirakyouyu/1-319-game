@@ -455,7 +455,7 @@ const DEATH_FX=[
   },
 ];
 
-async function megaDeath(){const{v,i}=pickNew(DEATH_FX,lastD);lastD=i;sndDeath();await v()}
+async function megaDeath(){const v=DEATH_FX[30];sndDeath();await v()}
 
 // ================================================================
 // FLOW
