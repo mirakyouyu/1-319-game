@@ -477,7 +477,6 @@ function go(){
   runId++;
   const myId=runId;
   const hit=Math.floor(Math.random()*denom)===0;
-  if(hit&&Math.random()<.25)sndDead();
   if(!_sil._u){_sil.play().then(()=>{_sil._u=1}).catch(()=>{})}
   const flow=hit?flowDeath:flowSafe;
   flow(myId).catch(e=>{console.error('enshutsu error:',e)}).finally(()=>{cleanupFX();unlock()});
