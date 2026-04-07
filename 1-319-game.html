@@ -194,14 +194,6 @@ function cleanupFX(){
 
 function unlock(){busy=false;$('btn').classList.remove('disabled')}
 
-// ページロード時に自動で死亡フロー開始
-window.addEventListener('load',()=>{
-  busy=true;
-  $('btn').classList.add('disabled');
-  runId++;
-  const myId=runId;
-  flowDeath(myId).catch(e=>{console.error(e)}).finally(()=>{cleanupFX();unlock()});
-});
 
 // === ゲーム ===
 function setMode(m){multi=!!m;$('m1').className=m?'':'on';$('m2').className=m?'on':'';if(multi){$('prow').classList.remove('hide');buildInputs()}else $('prow').classList.add('hide');ci=0;showTurn()}
