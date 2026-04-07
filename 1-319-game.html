@@ -162,10 +162,14 @@ async function waitDeathButton(){
   sndDead2();
   stgOff();
   document.body.classList.remove('heavy-shake');
+  fl('fW',120);
+  document.body.classList.add('heavy-shake');
+  showCrack();shards(20);particles('#ff4444',30);fl('fR',300);
   $('dTxt').textContent='死';$('dTxt').style.color='#f00';$('dTxt').style.textShadow='0 0 60px rgba(255,0,0,.9),0 0 120px rgba(255,0,0,.5)';
   $('dTxt').classList.add('active');
-  await wait(1500);
-  $('dTxt').classList.remove('active');
+  await wait(2000);
+  document.body.classList.remove('heavy-shake');
+  $('dTxt').classList.remove('active');$('crack').classList.remove('active');$('crack').innerHTML='';
 }
 function sndBoom(){const a=aC(),b=a.createBuffer(1,Math.floor(a.sampleRate*.8),a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(a.sampleRate*.15));const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='lowpass';f.frequency.value=150;s.buffer=b;s.connect(f);f.connect(g);g.connect(a.destination);g.gain.setValueAtTime(1.2,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.8);s.start()}
 function sndElectric(){const a=aC(),b=a.createBuffer(1,Math.floor(a.sampleRate*.4),a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/(a.sampleRate*.4));const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='bandpass';f.frequency.value=2500;f.Q.value=2;s.buffer=b;s.connect(f);f.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.7,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.4);s.start()}
