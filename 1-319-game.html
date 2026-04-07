@@ -155,6 +155,7 @@ function sndDead2(){if(!aud02Buf)return;const a=aC();const s=a.createBufferSourc
 // 死亡確認: 既存の演出ボタンを使用
 async function waitDeathButton(){
   document.body.classList.remove('heavy-shake');
+  $('crack').classList.remove('active');$('crack').innerHTML='';
   stgOff();
   const cls=pick(['black-btn','red-btn','eva-btn','chaos-btn']);
   const label=pick(PUSH_LABELS[cls]||['押せ']);
