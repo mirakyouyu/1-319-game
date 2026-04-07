@@ -151,7 +151,7 @@ const SND02='data:audio/mp4;base64,AAAAHGZ0eXBNNEEgAAACAE00QSBpc29taXNvMgAAAAhmc
 // SND02をページ読み込み時にAudioBufferへデコード
 let aud02Buf=null;
 (async()=>{try{const b64=SND02.split(',')[1];const bin=atob(b64);const ab=new ArrayBuffer(bin.length);const v=new Uint8Array(ab);for(let i=0;i<bin.length;i++)v[i]=bin.charCodeAt(i);const tmp=new(window.AudioContext||window.webkitAudioContext)();aud02Buf=await tmp.decodeAudioData(ab);tmp.close();}catch(e){console.warn('SND02 decode failed',e)}})();
-function sndDead2(){if(!aud02Buf)return;const a=aC();const s=a.createBufferSource();s.buffer=aud02Buf;const g=a.createGain();s.connect(g);g.connect(a.destination);const dur=aud02Buf.duration;const fs=Math.max(0,dur-5);g.gain.setValueAtTime(1,a.currentTime);g.gain.setValueAtTime(1,a.currentTime+fs);g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+dur);s.start();}
+function sndDead2(){if(!aud02Buf)return;const a=aC();const s=a.createBufferSource();s.buffer=aud02Buf;const g=a.createGain();s.connect(g);g.connect(a.destination);const dur=aud02Buf.duration;const fs=Math.max(0,dur-3);g.gain.setValueAtTime(1,a.currentTime);g.gain.setValueAtTime(1,a.currentTime+fs);g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+dur);s.start();}
 // 死亡確認: 既存の演出ボタンを使用
 async function waitDeathButton(){
   document.body.classList.remove('heavy-shake');
