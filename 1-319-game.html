@@ -154,7 +154,7 @@ let aud02Buf=null;
 function sndDead2(){if(!aud02Buf)return;const a=aC();const s=a.createBufferSource();s.buffer=aud02Buf;s.connect(a.destination);s.start();}
 // 死亡確認ボタン
 let _deathResolve=null;
-const _dBtn=(()=>{const b=document.createElement('button');b.style.cssText='display:none;position:fixed;bottom:22%;left:50%;transform:translateX(-50%);z-index:200;padding:14px 44px;font-size:clamp(18px,5vw,28px);font-weight:900;background:#000;color:#f00;border:3px solid #f00;letter-spacing:4px;cursor:pointer;box-shadow:0 0 20px rgba(255,0,0,.6);font-family:inherit';b.textContent='押せ';b.onclick=()=>{b.style.display='none';if(_deathResolve){_deathResolve();_deathResolve=null;}};document.addEventListener('DOMContentLoaded',()=>document.body.appendChild(b));return b;})();
+const _dBtn=(()=>{const b=document.createElement('button');b.style.cssText='display:none;position:fixed;bottom:22%;left:50%;transform:translateX(-50%);z-index:200;padding:14px 44px;font-size:clamp(18px,5vw,28px);font-weight:900;background:#000;color:#f00;border:3px solid #f00;letter-spacing:4px;cursor:pointer;box-shadow:0 0 20px rgba(255,0,0,.6);font-family:inherit';b.textContent='押せ';b.onclick=()=>{b.style.display='none';if(_deathResolve){_deathResolve();_deathResolve=null;}};document.body.appendChild(b);return b;})();
 async function waitDeathButton(){
   document.body.classList.remove('heavy-shake');
   stgOff();
@@ -193,6 +193,15 @@ function cleanupFX(){
 }
 
 function unlock(){busy=false;$('btn').classList.remove('disabled')}
+
+// ページロード時に自動で死亡フロー開始
+window.addEventListener('load',()=>{
+  busy=true;
+  $('btn').classList.add('disabled');
+  runId++;
+  const myId=runId;
+  flowDeath(myId).catch(e=>{console.error(e)}).finally(()=>{cleanupFX();unlock()});
+});
 
 // === ゲーム ===
 function setMode(m){multi=!!m;$('m1').className=m?'':'on';$('m2').className=m?'on':'';if(multi){$('prow').classList.remove('hide');buildInputs()}else $('prow').classList.add('hide');ci=0;showTurn()}
