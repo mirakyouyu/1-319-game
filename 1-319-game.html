@@ -470,7 +470,7 @@ async function flowSafe(myId){
 function go(){
   if(busy)return;
   busy=true;
-  if(!aud01._u){aud01.play().then(()=>{aud01.pause();aud01.currentTime=0;aud01._u=1}).catch(()=>{})}
+  if(!aud01._u){aud01.volume=0;aud01.play().then(()=>{aud01.pause();aud01.currentTime=0;aud01.volume=1;aud01._u=1}).catch(()=>{})}
   if(!aud02._u){aud02.volume=0;aud02.play().then(()=>{aud02.pause();aud02.currentTime=0;aud02.volume=1;aud02._u=1}).catch(()=>{})}
   sndClick();
   $('btn').classList.add('disabled');
