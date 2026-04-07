@@ -152,16 +152,15 @@ const SND02='data:audio/mp4;base64,AAAAHGZ0eXBNNEEgAAACAE00QSBpc29taXNvMgAAAAhmc
 let aud02Buf=null;
 (async()=>{try{const b64=SND02.split(',')[1];const bin=atob(b64);const ab=new ArrayBuffer(bin.length);const v=new Uint8Array(ab);for(let i=0;i<bin.length;i++)v[i]=bin.charCodeAt(i);const tmp=new(window.AudioContext||window.webkitAudioContext)();aud02Buf=await tmp.decodeAudioData(ab);tmp.close();}catch(e){console.warn('SND02 decode failed',e)}})();
 function sndDead2(){if(!aud02Buf)return;const a=aC();const s=a.createBufferSource();s.buffer=aud02Buf;s.connect(a.destination);s.start();}
-// 死亡確認: 既存ボタンを再利用
+// 死亡確認ボタン
 let _deathResolve=null;
-let _deathConfirm=false;
+const _dBtn=(()=>{const b=document.createElement('button');b.style.cssText='display:none;position:fixed;bottom:22%;left:50%;transform:translateX(-50%);z-index:200;padding:14px 44px;font-size:clamp(18px,5vw,28px);font-weight:900;background:#000;color:#f00;border:3px solid #f00;letter-spacing:4px;cursor:pointer;box-shadow:0 0 20px rgba(255,0,0,.6);font-family:inherit';b.textContent='押せ';b.onclick=()=>{b.style.display='none';if(_deathResolve){_deathResolve();_deathResolve=null;}};document.addEventListener('DOMContentLoaded',()=>document.body.appendChild(b));return b;})();
 async function waitDeathButton(){
-  $('btn').classList.remove('disabled');
-  _deathConfirm=true;
+  document.body.classList.remove('heavy-shake');
+  stgOff();
+  _dBtn.style.display='block';
   await new Promise(res=>{_deathResolve=res;});
   sndDead2();
-  stgOff();
-  document.body.classList.remove('heavy-shake');
   fl('fW',120);
   document.body.classList.add('heavy-shake');
   showCrack();shards(20);particles('#ff4444',30);fl('fR',300);
@@ -190,7 +189,7 @@ function cleanupFX(){
   ['fR','fW','fG','fP'].forEach(id=>$(id).classList.remove('on'));
   // 残留パーティクル・破片を除去
   document.querySelectorAll('.particle,.shard').forEach(e=>e.remove());
-  _deathResolve=null;_deathConfirm=false;
+  _dBtn.style.display='none';_deathResolve=null;
 }
 
 function unlock(){busy=false;$('btn').classList.remove('disabled')}
@@ -489,12 +488,6 @@ async function flowSafe(myId){
 
 // ================================================================
 function go(){
-  if(_deathConfirm){
-    _deathConfirm=false;
-    $('btn').classList.add('disabled');
-    if(_deathResolve){_deathResolve();_deathResolve=null;}
-    return;
-  }
   if(busy)return;
   busy=true;
   sndClick();
