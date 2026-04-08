@@ -163,9 +163,11 @@ async function waitDeathButton(){
   stgOff();
   const cls=pick(['black-btn','red-btn','eva-btn','chaos-btn']);
   const label=pick(PUSH_LABELS[cls]||['押せ']);
+  sndBtn();
+  await wait(2000);
   await new Promise(res=>{
     stgSet('rgba(0,0,0,.92)',`<div class="push-btn-wrap show"><button class="push-btn ${cls}" id="epb">${label}</button><div class="push-label">▼ PUSH ▼</div></div>`);
-    stgOn();sndBtn();let d=false;
+    stgOn();let d=false;
     const f=()=>{if(d)return;d=true;sndPush();sndDead2();if(PUSH_EFFECTS[cls])PUSH_EFFECTS[cls]();fl('fW',120);stgOff();setTimeout(res,200)};
     const b=$('epb');if(b){b.onclick=f;b.ontouchstart=e=>{e.preventDefault();f()}}
     setTimeout(f,8000);
@@ -253,7 +255,7 @@ function pushBtn(cls){
   return new Promise(r=>{
     const label=pick(PUSH_LABELS[cls]||['押せ']);
     stgSet('rgba(0,0,0,.92)',`<div class="push-btn-wrap show"><button class="push-btn ${cls}" id="epb">${label}</button><div class="push-label">▼ PUSH ▼</div></div>`);
-    stgOn();sndBtn();let d=false;
+    stgOn();let d=false;
     const f=()=>{if(d)return;d=true;sndPush();if(PUSH_EFFECTS[cls])PUSH_EFFECTS[cls]();fl('fW',120);stgOff();setTimeout(r,350)};
     const b=$('epb');if(b){b.onclick=f;b.ontouchstart=e=>{e.preventDefault();f()}}
     setTimeout(f,5000);
@@ -494,9 +496,11 @@ async function doFakeoutDeath(){
   $('crack').classList.remove('active');$('crack').innerHTML='';
   const cls=pick(['black-btn','chaos-btn','eva-btn','red-btn']);
   const label=pick(PUSH_LABELS[cls]||['押せ']);
+  sndBtn();
+  await wait(2000);
   await new Promise(res=>{
     stgSet('rgba(0,0,0,.92)',`<div class="push-btn-wrap show"><button class="push-btn ${cls}" id="epb">${label}</button><div class="push-label">▼ PUSH ▼</div></div>`);
-    stgOn();sndBtn();let d=false;
+    stgOn();let d=false;
     const f=()=>{if(d)return;d=true;sndPush();if(PUSH_EFFECTS[cls])PUSH_EFFECTS[cls]();fl('fG',200);stgOff();setTimeout(res,200)};
     const b=$('epb');if(b){b.onclick=f;b.ontouchstart=e=>{e.preventDefault();f()}}
     setTimeout(f,8000);
