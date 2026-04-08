@@ -484,6 +484,25 @@ async function flowDeath(myId){
   if(ok())finalResult(true);
 }
 
+// ガセ死亡ボタン演出（死なないパターン）
+async function doFakeoutDeath(){
+  document.body.classList.add('heavy-shake');
+  fl('fW',150);await wait(200);
+  showCrack();shards(12);particles('#ff4444',20);fl('fR',200);
+  await wait(600);
+  document.body.classList.remove('heavy-shake');
+  $('crack').classList.remove('active');$('crack').innerHTML='';
+  const cls=pick(['black-btn','chaos-btn','eva-btn','red-btn']);
+  const label=pick(PUSH_LABELS[cls]||['押せ']);
+  await new Promise(res=>{
+    stgSet('rgba(0,0,0,.92)',`<div class="push-btn-wrap show"><button class="push-btn ${cls}" id="epb">${label}</button><div class="push-label">▼ PUSH ▼</div></div>`);
+    stgOn();sndBtn();let d=false;
+    const f=()=>{if(d)return;d=true;sndPush();if(PUSH_EFFECTS[cls])PUSH_EFFECTS[cls]();fl('fG',200);stgOff();setTimeout(res,200)};
+    const b=$('epb');if(b){b.onclick=f;b.ontouchstart=e=>{e.preventDefault();f()}}
+    setTimeout(f,8000);
+  });
+}
+
 async function flowSafe(myId){
   const ok=()=>myId===runId;
   const r=Math.random();
@@ -491,6 +510,8 @@ async function flowSafe(myId){
   if(r<.88){await doYokoku();if(!ok())return;await wait(150);if(ok())finalResult(false);return}
   if(r<.95){await doYokoku();if(!ok())return;await doReach();if(!ok())return;if(Math.random()<.3){await doSP();if(!ok())return}await wait(150);if(ok())finalResult(false);return}
   if(r<.99){await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doCutin();if(!ok())return;if(Math.random()<.3){await pushBtn(pick(['red-btn','blue-btn','silver-btn','gold-btn']));if(!ok())return}await wait(150);if(ok())finalResult(false);return}
+  // 2% ガセ死亡ボタン
+  if(r<.97){await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doFakeoutDeath();if(!ok())return;await wait(150);if(ok())finalResult(false);return}
   // 1% 暴走ガセ
   await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doBousou();if(!ok())return;await pushBtn(Math.random()<.25?'rainbow-btn':Math.random()<.3?'gold-btn':pick(['red-btn','blue-btn','purple-btn']));if(!ok())return;await wait(150);if(ok())finalResult(false);
 }
