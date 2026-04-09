@@ -513,9 +513,9 @@ async function flowSafe(myId){
   if(r<.78){await wait(120);if(ok())finalResult(false);return}
   if(r<.88){await doYokoku();if(!ok())return;await wait(150);if(ok())finalResult(false);return}
   if(r<.95){await doYokoku();if(!ok())return;await doReach();if(!ok())return;if(Math.random()<.3){await doSP();if(!ok())return}await wait(150);if(ok())finalResult(false);return}
-  if(r<.99){await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doCutin();if(!ok())return;if(Math.random()<.3){await pushBtn(pick(['red-btn','blue-btn','silver-btn','gold-btn']));if(!ok())return}await wait(150);if(ok())finalResult(false);return}
+  if(r<.97){await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doCutin();if(!ok())return;if(Math.random()<.3){await pushBtn(pick(['red-btn','blue-btn','silver-btn','gold-btn']));if(!ok())return}await wait(150);if(ok())finalResult(false);return}
   // 2% ガセ死亡ボタン
-  if(r<.97){await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doFakeoutDeath();if(!ok())return;await wait(150);if(ok())finalResult(false);return}
+  if(r<.99){await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doFakeoutDeath();if(!ok())return;await wait(150);if(ok())finalResult(false);return}
   // 1% 暴走ガセ
   await doYokoku();if(!ok())return;await doReach();if(!ok())return;await doSP();if(!ok())return;await doBousou();if(!ok())return;await pushBtn(Math.random()<.25?'rainbow-btn':Math.random()<.3?'gold-btn':pick(['red-btn','blue-btn','purple-btn']));if(!ok())return;await wait(150);if(ok())finalResult(false);
 }
