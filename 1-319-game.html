@@ -168,7 +168,7 @@ async function waitDeathButton(){
   await new Promise(res=>{
     stgSet('rgba(0,0,0,.92)',`<div class="push-btn-wrap show"><button class="push-btn ${cls}" id="epb">${label}</button><div class="push-label">▼ PUSH ▼</div></div>`);
     stgOn();let d=false;
-    const f=()=>{if(d)return;d=true;sndPush();sndDead2();if(PUSH_EFFECTS[cls])PUSH_EFFECTS[cls]();fl('fW',120);stgOff();setTimeout(res,600)};
+    const f=()=>{if(d)return;d=true;sndPush();sndDead2();if(PUSH_EFFECTS[cls])PUSH_EFFECTS[cls]();fl('fW',120);stgOff();setTimeout(res,400)};
     const b=$('epb');if(b){b.onclick=f;b.ontouchstart=e=>{e.preventDefault();f()}}
     setTimeout(f,8000);
   });
