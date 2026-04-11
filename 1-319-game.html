@@ -164,7 +164,7 @@ async function waitDeathButton(){
   const cls=pick(['black-btn','red-btn','eva-btn','chaos-btn']);
   const label=pick(PUSH_LABELS[cls]||['押せ']);
   sndBtn();
-  await wait(2000);
+  await wait(1500);
   await new Promise(res=>{
     stgSet('rgba(0,0,0,.92)',`<div class="push-btn-wrap show"><button class="push-btn ${cls}" id="epb">${label}</button><div class="push-label">▼ PUSH ▼</div></div>`);
     stgOn();let d=false;
